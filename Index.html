@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+:root {
+–bg: #0a0a0f;
+–surface: #111118;
+–surface2: #1a1a24;
+–border: #2a2a3a;
+–accent: #6c63ff;
+–accent2: #ff6584;
+–accent3: #43e97b;
+–text: #e8e8f0;
+–muted: #6b6b80;
+–gold: #f5c842;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘IBM Plex Sans Arabic’, sans-serif;
+background: var(–bg);
+color: var(–text);
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* Animated bg */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background:
+radial-gradient(ellipse 60% 40% at 20% 10%, rgba(108,99,255,0.12) 0%, transparent 60%),
+radial-gradient(ellipse 50% 50% at 80% 80%, rgba(255,101,132,0.08) 0%, transparent 60%);
+pointer-events: none;
+z-index: 0;
+}
+
+.container {
+max-width: 860px;
+margin: 0 auto;
+padding: 24px 16px 60px;
+position: relative;
+z-index: 1;
+}
+
+/* Header */
+.header {
+text-align: center;
+margin-bottom: 40px;
+padding-top: 20px;
+}
+
+.logo {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 50px;
+padding: 8px 20px;
+margin-bottom: 24px;
+font-size: 13px;
+color: var(–muted);
+letter-spacing: 0.5px;
+}
+
+.logo-dot {
+width: 8px; height: 8px;
+border-radius: 50%;
+background: var(–accent3);
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+h1 {
+font-size: clamp(28px, 6vw, 42px);
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 10px;
+background: linear-gradient(135deg, #fff 0%, var(–accent) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.subtitle {
+color: var(–muted);
+font-size: 15px;
+font-weight: 300;
+}
+
+/* Steps nav */
+.steps-nav {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 0;
+margin-bottom: 32px;
+}
+
+.step-item {
+display: flex;
+align-items: center;
+gap: 8px;
+cursor: pointer;
+padding: 10px 16px;
+border-radius: 10px;
+transition: all 0.2s;
+}
+
+.step-item:hover { background: var(–surface2); }
+
+.step-num {
+width: 30px; height: 30px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 13px;
+font-weight: 600;
+border: 2px solid var(–border);
+color: var(–muted);
+transition: all 0.3s;
+flex-shrink: 0;
+}
+
+.step-item.active .step-num {
+background: var(–accent);
+border-color: var(–accent);
+color: white;
+box-shadow: 0 0 16px rgba(108,99,255,0.4);
+}
+
+.step-item.done .step-num {
+background: var(–accent3);
+border-color: var(–accent3);
+color: #000;
+}
+
+.step-label {
+font-size: 13px;
+color: var(–muted);
+transition: color 0.3s;
+white-space: nowrap;
+}
+
+.step-item.active .step-label { color: var(–text); }
+
+.step-line {
+width: 40px;
+height: 2px;
+background: var(–border);
+flex-shrink: 0;
+}
+
+/* Card */
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 28px;
+margin-bottom: 20px;
+transition: all 0.3s;
+}
+
+.card:hover { border-color: rgba(108,99,255,0.3); }
+
+.card-title {
+font-size: 17px;
+font-weight: 600;
+margin-bottom: 6px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.card-desc {
+font-size: 13px;
+color: var(–muted);
+margin-bottom: 20px;
+line-height: 1.6;
+}
+
+/* API Key input */
+.input-group {
+position: relative;
+margin-bottom: 16px;
+}
+
+.input-label {
+font-size: 12px;
+color: var(–muted);
+margin-bottom: 6px;
+display: block;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.input-field {
+width: 100%;
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 12px 16px;
+color: var(–text);
+font-family: inherit;
+font-size: 14px;
+transition: border-color 0.2s;
+direction: ltr;
+text-align: left;
+}
+
+.input-field:focus {
+outline: none;
+border-color: var(–accent);
+box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+}
+
+/* Upload zone */
+.upload-zone {
+border: 2px dashed var(–border);
+border-radius: 16px;
+padding: 40px 20px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s;
+position: relative;
+overflow: hidden;
+}
+
+.upload-zone:hover, .upload-zone.dragover {
+border-color: var(–accent);
+background: rgba(108,99,255,0.05);
+}
+
+.upload-zone.has-file {
+border-color: var(–accent3);
+background: rgba(67,233,123,0.05);
+}
+
+.upload-icon {
+font-size: 48px;
+margin-bottom: 12px;
+display: block;
+}
+
+.upload-text { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+.upload-hint { font-size: 13px; color: var(–muted); }
+
+#fileInput { display: none; }
+
+/* File info */
+.file-info {
+display: none;
+align-items: center;
+gap: 12px;
+padding: 12px 16px;
+background: rgba(67,233,123,0.08);
+border: 1px solid rgba(67,233,123,0.2);
+border-radius: 12px;
+margin-top: 12px;
+}
+
+.file-info.show { display: flex; }
+.file-icon { font-size: 24px; }
+.file-name { font-size: 14px; font-weight: 500; flex: 1; }
+.file-size { font-size: 12px; color: var(–muted); }
+
+/* Buttons */
+.btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+padding: 13px 28px;
+border-radius: 12px;
+font-family: inherit;
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+border: none;
+transition: all 0.2s;
+width: 100%;
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(–accent), #9c94ff);
+color: white;
+box-shadow: 0 4px 20px rgba(108,99,255,0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+transform: translateY(-2px);
+box-shadow: 0 8px 30px rgba(108,99,255,0.4);
+}
+
+.btn-primary:disabled {
+opacity: 0.4;
+cursor: not-allowed;
+transform: none;
+}
+
+.btn-secondary {
+background: var(–surface2);
+border: 1px solid var(–border);
+color: var(–text);
+}
+
+.btn-secondary:hover { border-color: var(–accent); color: var(–accent); }
+
+.btn-gold {
+background: linear-gradient(135deg, var(–gold), #f0a500);
+color: #000;
+box-shadow: 0 4px 20px rgba(245,200,66,0.3);
+}
+
+.btn-gold:hover:not(:disabled) {
+transform: translateY(-2px);
+box-shadow: 0 8px 30px rgba(245,200,66,0.4);
+}
+
+.btn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Progress */
+.progress-wrap {
+display: none;
+margin-top: 16px;
+}
+
+.progress-wrap.show { display: block; }
+
+.progress-label {
+font-size: 13px;
+color: var(–muted);
+margin-bottom: 8px;
+display: flex;
+justify-content: space-between;
+}
+
+.progress-bar {
+height: 6px;
+background: var(–surface2);
+border-radius: 99px;
+overflow: hidden;
+}
+
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–accent), var(–accent2));
+border-radius: 99px;
+transition: width 0.4s;
+width: 0%;
+}
+
+.progress-fill.indeterminate {
+width: 40% !important;
+animation: slide 1.5s infinite;
+}
+
+@keyframes slide {
+0% { transform: translateX(200%); }
+100% { transform: translateX(-300%); }
+}
+
+/* Transcript area */
+.transcript-box {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 16px;
+min-height: 160px;
+font-size: 15px;
+line-height: 1.8;
+color: var(–text);
+white-space: pre-wrap;
+word-break: break-word;
+direction: rtl;
+}
+
+.transcript-box.empty {
+color: var(–muted);
+font-style: italic;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 14px;
+}
+
+/* Copy btn */
+.copy-btn {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 7px 14px;
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 8px;
+font-family: inherit;
+font-size: 12px;
+color: var(–muted);
+cursor: pointer;
+transition: all 0.2s;
+margin-top: 10px;
+}
+
+.copy-btn:hover { border-color: var(–accent); color: var(–accent); }
+
+/* Content outputs */
+.outputs-grid {
+display: grid;
+grid-template-columns: 1fr;
+gap: 14px;
+}
+
+.output-card {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 14px;
+padding: 16px;
+transition: all 0.2s;
+}
+
+.output-card:hover { border-color: rgba(108,99,255,0.3); }
+
+.output-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 10px;
+}
+
+.output-label {
+font-size: 11px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.8px;
+padding: 4px 10px;
+border-radius: 6px;
+}
+
+.label-title { background: rgba(108,99,255,0.15); color: var(–accent); }
+.label-caption { background: rgba(255,101,132,0.15); color: var(–accent2); }
+.label-hashtags { background: rgba(67,233,123,0.15); color: var(–accent3); }
+.label-desc { background: rgba(245,200,66,0.15); color: var(–gold); }
+.label-hooks { background: rgba(255,165,0,0.15); color: orange; }
+
+.output-text {
+font-size: 14px;
+line-height: 1.7;
+color: var(–text);
+direction: rtl;
+}
+
+/* Platform selector */
+.platform-grid {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+margin-bottom: 16px;
+}
+
+.platform-btn {
+padding: 8px 16px;
+border-radius: 50px;
+border: 1.5px solid var(–border);
+background: transparent;
+color: var(–muted);
+font-family: inherit;
+font-size: 13px;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.platform-btn.active {
+border-color: var(–accent);
+color: var(–accent);
+background: rgba(108,99,255,0.1);
+}
+
+.platform-btn:hover { border-color: var(–accent); }
+
+/* Page views */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Error */
+.error-box {
+display: none;
+padding: 12px 16px;
+background: rgba(255,101,132,0.08);
+border: 1px solid rgba(255,101,132,0.3);
+border-radius: 10px;
+color: var(–accent2);
+font-size: 13px;
+margin-top: 12px;
+line-height: 1.6;
+}
+
+.error-box.show { display: block; }
+
+/* Textarea for editing */
+textarea.input-field {
+resize: vertical;
+min-height: 120px;
+line-height: 1.7;
+}
+
+/* Token counter */
+.word-count {
+font-size: 11px;
+color: var(–muted);
+text-align: left;
+margin-top: 6px;
+}
+
+/* Success flash */
+.toast {
+position: fixed;
+bottom: 30px;
+left: 50%;
+transform: translateX(-50%) translateY(80px);
+background: var(–accent3);
+color: #000;
+padding: 12px 24px;
+border-radius: 50px;
+font-size: 14px;
+font-weight: 600;
+transition: transform 0.3s;
+z-index: 999;
+white-space: nowrap;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Divider */
+.divider {
+height: 1px;
+background: var(–border);
+margin: 20px 0;
+}
+
+.section-label {
+font-size: 12px;
+text-transform: uppercase;
+letter-spacing: 1px;
+color: var(–muted);
+margin-bottom: 12px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      Content Studio
+    </div>
+    <h1>حوّل فيديوهاتك<br>لمحتوى جاهز</h1>
+    <p class="subtitle">ارفع الفيديو ← استخرج النص ← ولّد العناوين والكابشن والهاشتاقات</p>
+  </div>
+
+  <!-- Steps -->
+
+  <div class="steps-nav">
+    <div class="step-item active" id="nav1" onclick="goToPage(1)">
+      <div class="step-num">1</div>
+      <div class="step-label">الإعداد</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" id="nav2" onclick="goToPage(2)">
+      <div class="step-num">2</div>
+      <div class="step-label">تفريغ الفيديو</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" id="nav3" onclick="goToPage(3)">
+      <div class="step-num">3</div>
+      <div class="step-label">توليد المحتوى</div>
+    </div>
+  </div>
+
+  <!-- PAGE 1: Setup -->
+
+  <div class="page active" id="page1">
+    <div class="card">
+      <div class="card-title">🔑 مفتاح OpenAI API</div>
+      <div class="card-desc">المفتاح بيتحفظ في المتصفح بس ومش بيتبعت لأي مكان. احصل عليه من platform.openai.com</div>
+      <div class="input-group">
+        <label class="input-label">API Key</label>
+        <input type="password" class="input-field" id="apiKey" placeholder="sk-..." autocomplete="off">
+      </div>
+      <button class="btn btn-primary" onclick="saveKey()">حفظ والمتابعة ←</button>
+      <div class="error-box" id="keyError">من فضلك ادخل مفتاح API صحيح (يبدأ بـ sk-)</div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: Transcribe -->
+
+  <div class="page" id="page2">
+    <div class="card">
+      <div class="card-title">🎬 رفع الفيديو</div>
+      <div class="card-desc">يدعم MP4، MOV، M4V، وكمان الصوت MP3/M4A — الحد الأقصى 25MB</div>
+
+```
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event)" ondrop="handleDrop(event)">
+    <span class="upload-icon">📹</span>
+    <div class="upload-text">اضغط لترفع الفيديو أو اسحبه هنا</div>
+    <div class="upload-hint">MOV • MP4 • MP3 • M4A — حتى 25MB</div>
+  </div>
+  <input type="file" id="fileInput" accept="video/*,audio/*,.mov,.mp4,.m4a,.mp3" onchange="handleFile(this.files[0])">
+
+  <div class="file-info" id="fileInfo">
+    <div class="file-icon">🎥</div>
+    <div class="file-name" id="fileName">-</div>
+    <div class="file-size" id="fileSize">-</div>
+  </div>
+
+  <div style="margin-top: 16px;">
+    <button class="btn btn-primary" id="transcribeBtn" onclick="transcribeVideo()" disabled>
+      🎙️ استخرج النص الآن
+    </button>
+  </div>
+
+  <div class="progress-wrap" id="transcribeProgress">
+    <div class="progress-label">
+      <span id="progressLabel">جاري الرفع...</span>
+      <span id="progressPct"></span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill indeterminate" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="error-box" id="transcribeError"></div>
+</div>
+
+<!-- Transcript result -->
+<div class="card" id="transcriptCard" style="display:none">
+  <div class="card-title">📝 النص المستخرج</div>
+  <div class="card-desc">يمكنك تعديل النص قبل توليد المحتوى</div>
+  <textarea class="input-field" id="transcriptText" style="min-height:180px; resize:vertical; direction:rtl; text-align:right;"></textarea>
+  <div class="word-count" id="wordCount"></div>
+  <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+    <button class="copy-btn" onclick="copyText('transcriptText')">📋 نسخ النص</button>
+    <button class="btn btn-gold" style="flex:1; min-width:200px;" onclick="goToContentPage()">
+      توليد المحتوى ← ✨
+    </button>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- PAGE 3: Generate Content -->
+
+  <div class="page" id="page3">
+    <div class="card">
+      <div class="card-title">✨ توليد المحتوى</div>
+      <div class="card-desc">اختار المنصة وهيولّد لك كل اللي تحتاجه</div>
+
+```
+  <div class="section-label">المنصة المستهدفة</div>
+  <div class="platform-grid">
+    <button class="platform-btn active" data-platform="facebook" onclick="selectPlatform(this)">Facebook</button>
+    <button class="platform-btn" data-platform="youtube" onclick="selectPlatform(this)">YouTube</button>
+    <button class="platform-btn" data-platform="instagram" onclick="selectPlatform(this)">Instagram</button>
+    <button class="platform-btn" data-platform="tiktok" onclick="selectPlatform(this)">TikTok</button>
+  </div>
+
+  <div class="section-label">النص (يمكنك تعديله)</div>
+  <textarea class="input-field" id="contentTranscript" style="min-height:100px; direction:rtl; text-align:right;"></textarea>
+
+  <div style="margin-top: 16px;">
+    <button class="btn btn-primary" id="generateBtn" onclick="generateContent()">
+      🚀 ولّد المحتوى
+    </button>
+  </div>
+
+  <div class="progress-wrap" id="generateProgress">
+    <div class="progress-label">
+      <span>جاري توليد المحتوى...</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill indeterminate"></div>
+    </div>
+  </div>
+
+  <div class="error-box" id="generateError"></div>
+</div>
+
+<!-- Outputs -->
+<div id="outputsSection" style="display:none;">
+  <div class="outputs-grid" id="outputsGrid"></div>
+
+  <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
+    <button class="btn btn-secondary" style="flex:1;" onclick="copyAllOutputs()">📋 نسخ كل المحتوى</button>
+    <button class="btn btn-primary" style="flex:1;" onclick="generateContent()">🔄 ولّد مرة تانية</button>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- Toast -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let selectedFile = null;
+  let transcript = '';
+  let selectedPlatform = 'facebook';
+  let generatedOutputs = {};
+
+  // ─── Navigation ───
+  function goToPage(n) {
+    document.querySelectorAll('.page').forEach((p,i) => {
+      p.classList.toggle('active', i+1 === n);
+    });
+    document.querySelectorAll('.step-item').forEach((s,i) => {
+      s.classList.toggle('active', i+1 === n);
+    });
+  }
+
+  // ─── API Key ───
+  function saveKey() {
+    const key = document.getElementById('apiKey').value.trim();
+    if (!key.startsWith('sk-')) {
+      document.getElementById('keyError').classList.add('show');
+      return;
+    }
+    document.getElementById('keyError').classList.remove('show');
+    localStorage.setItem('oai_key', key);
+    document.getElementById('nav2').classList.add('done');
+    goToPage(2);
+    showToast('✅ تم حفظ المفتاح');
+  }
+
+  // Load saved key
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem('oai_key');
+    if (saved) document.getElementById('apiKey').value = saved;
+  });
+
+  // ─── File handling ───
+  function handleDrag(e) {
+    e.preventDefault();
+    document.getElementById('uploadZone').classList.add('dragover');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('uploadZone').classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  }
+
+  function handleFile(file) {
+    if (!file) return;
+    if (file.size > 26 * 1024 * 1024) {
+      showError('transcribeError', `حجم الملف ${formatSize(file.size)} — الحد الأقصى 25MB`);
+      return;
+    }
+    selectedFile = file;
+    document.getElementById('uploadZone').classList.add('has-file');
+    document.getElementById('fileInfo').classList.add('show');
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = formatSize(file.size);
+    document.getElementById('transcribeBtn').disabled = false;
+    hideError('transcribeError');
+  }
+
+  function formatSize(bytes) {
+    if (bytes > 1024*1024) return (bytes/(1024*1024)).toFixed(1) + ' MB';
+    return (bytes/1024).toFixed(0) + ' KB';
+  }
+
+  // ─── Transcribe ───
+  async function transcribeVideo() {
+    const key = localStorage.getItem('oai_key');
+    if (!key) { goToPage(1); return; }
+    if (!selectedFile) return;
+
+    document.getElementById('transcribeBtn').disabled = true;
+    document.getElementById('transcribeProgress').classList.add('show');
+    document.getElementById('transcriptCard').style.display = 'none';
+    hideError('transcribeError');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('model', 'whisper-1');
+      formData.append('language', 'ar');
+      formData.append('response_format', 'text');
+
+      document.getElementById('progressLabel').textContent = 'جاري رفع الفيديو وتفريغ الكلام...';
+
+      const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${key}` },
+        body: formData
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || 'خطأ في الـ API');
+      }
+
+      transcript = await res.text();
+      document.getElementById('transcriptText').value = transcript;
+      document.getElementById('contentTranscript').value = transcript;
+      updateWordCount();
+
+      document.getElementById('transcribeProgress').classList.remove('show');
+      document.getElementById('transcriptCard').style.display = 'block';
+      document.getElementById('transcribeBtn').disabled = false;
+      document.getElementById('nav2').classList.add('done');
+      showToast('✅ تم استخراج النص بنجاح!');
+
+    } catch(e) {
+      document.getElementById('transcribeProgress').classList.remove('show');
+      document.getElementById('transcribeBtn').disabled = false;
+      showError('transcribeError', `❌ خطأ: ${e.message}`);
+    }
+  }
+
+  function updateWordCount() {
+    const txt = document.getElementById('transcriptText').value;
+    const words = txt.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('wordCount').textContent = `${words} كلمة`;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('transcriptText')?.addEventListener('input', updateWordCount);
+  });
+
+  function goToContentPage() {
+    const txt = document.getElementById('transcriptText').value;
+    document.getElementById('contentTranscript').value = txt;
+    document.getElementById('nav3').classList.add('active');
+    goToPage(3);
+  }
+
+  // ─── Platform select ───
+  function selectPlatform(btn) {
+    document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedPlatform = btn.dataset.platform;
+  }
+
+  // ─── Generate Content ───
+  async function generateContent() {
+    const key = localStorage.getItem('oai_key');
+    if (!key) { goToPage(1); return; }
+
+    const txt = document.getElementById('contentTranscript').value.trim();
+    if (!txt) {
+      showError('generateError', 'مفيش نص! ارجع للخطوة السابقة وفرّغ الفيديو الأول');
+      return;
+    }
+
+    document.getElementById('generateBtn').disabled = true;
+    document.getElementById('generateProgress').classList.add('show');
+    document.getElementById('outputsSection').style.display = 'none';
+    hideError('generateError');
+
+    const platformNames = {
+      facebook: 'Facebook فيسبوك',
+      youtube: 'YouTube يوتيوب',
+      instagram: 'Instagram انستقرام',
+      tiktok: 'TikTok تيك توك'
+    };
+
+    const platformGuide = {
+      facebook: 'عنوان جذاب + كابشن 2-3 جمل + هاشتاقات عربية 5-8',
+      youtube: 'عنوان SEO قوي بالعربي + وصف 3-4 جمل + تاقات/كيوردز',
+      instagram: 'عنوان قصير + كابشن بالإيموجي + 15-20 هاشتاق',
+      tiktok: 'عنوان hook مثير + كابشن مختصر + 10 هاشتاقات ترند'
+    };
+
+    const prompt = `أنت خبير في إنتاج المحتوى الرقمي العربي.
+
+النص المستخرج من الفيديو:
+"${txt}"
+
+المنصة: ${platformNames[selectedPlatform]}
+المتطلبات: ${platformGuide[selectedPlatform]}
+
+أرجع JSON فقط بالصيغة دي (بدون أي كلام تاني):
+{
+  "title": "عنوان واحد جذاب ومناسب للمنصة",
+  "hook": "جملة افتتاحية قوية تخلي الناس يوقفوا التمرير",
+  "caption": "كابشن كامل جاهز للنشر",
+  "hashtags": "الهاشتاقات سطر واحد"
+}`;
+
+    try {
+      const res = await fetch('https://api.openai.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          max_tokens: 800,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || 'خطأ في الـ API');
+      }
+
+      const data = await res.json();
+      const raw = data.choices[0].message.content.trim();
+      const clean = raw.replace(/```json|```/g, '').trim();
+      generatedOutputs = JSON.parse(clean);
+
+      renderOutputs(generatedOutputs);
+
+      document.getElementById('generateProgress').classList.remove('show');
+      document.getElementById('generateBtn').disabled = false;
+      document.getElementById('outputsSection').style.display = 'block';
+      document.getElementById('nav3').classList.add('done');
+      showToast('🎉 تم توليد المحتوى!');
+
+    } catch(e) {
+      document.getElementById('generateProgress').classList.remove('show');
+      document.getElementById('generateBtn').disabled = false;
+      showError('generateError', `❌ خطأ: ${e.message}`);
+    }
+  }
+
+  function renderOutputs(data) {
+    const grid = document.getElementById('outputsGrid');
+    const items = [
+      { key: 'title', label: 'العنوان / Title', labelClass: 'label-title', icon: '🏆' },
+      { key: 'hook', label: 'جملة الـ Hook', labelClass: 'label-hooks', icon: '🎣' },
+      { key: 'caption', label: 'الكابشن', labelClass: 'label-caption', icon: '✍️' },
+      { key: 'hashtags', label: 'الهاشتاقات', labelClass: 'label-hashtags', icon: '#️⃣' },
+    ];
+
+    grid.innerHTML = items.map(item => `
+      <div class="output-card">
+        <div class="output-header">
+          <span class="output-label ${item.labelClass}">${item.icon} ${item.label}</span>
+          <button class="copy-btn" onclick="copyOutput('${item.key}')">📋 نسخ</button>
+        </div>
+        <div class="output-text" id="out_${item.key}">${(data[item.key] || '—').replace(/\n/g, '<br>')}</div>
+      </div>
+    `).join('');
+  }
+
+  // ─── Helpers ───
+  function copyText(id) {
+    const txt = document.getElementById(id).value;
+    navigator.clipboard.writeText(txt).then(() => showToast('✅ تم النسخ'));
+  }
+
+  function copyOutput(key) {
+    navigator.clipboard.writeText(generatedOutputs[key] || '').then(() => showToast('✅ تم النسخ'));
+  }
+
+  function copyAllOutputs() {
+    const all = Object.entries(generatedOutputs).map(([k,v]) => {
+      const labels = { title: 'العنوان', hook: 'Hook', caption: 'الكابشن', hashtags: 'الهاشتاقات' };
+      return `── ${labels[k] || k} ──\n${v}`;
+    }).join('\n\n');
+    navigator.clipboard.writeText(all).then(() => showToast('✅ تم نسخ كل المحتوى'));
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function hideError(id) {
+    document.getElementById(id).classList.remove('show');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+
+</body>
+</html>
